@@ -1,8 +1,7 @@
 package javaJmeter;
 
-import java.io.BufferedReader;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileOutputStream;
 
 import org.apache.jmeter.config.Arguments;
 import org.apache.jmeter.config.gui.ArgumentsPanel;
@@ -20,10 +19,6 @@ import org.apache.jmeter.testelement.TestPlan;
 import org.apache.jmeter.threads.ThreadGroup;
 import org.apache.jmeter.util.JMeterUtils;
 import org.apache.jorphan.collections.HashTree;
-
-import org.apache.jmeter.timers.ConstantThroughputTimer;
-import org.apache.jmeter.control.ThroughputController;
-
 
 public class testJmeter {
 
@@ -93,9 +88,7 @@ public class testJmeter {
                     //add Summarizer output to get test progress in stdout like:
                     // summary =      1 in   1.3s =    1.5/s Avg:   631 Min:   631 Max:   631 Err:     0 (0.00%)
                     Summariser summer = null;
-              
                     String summariserName = JMeterUtils.getPropDefault("summariser.name", "summary");
-                    
                     if (summariserName.length() > 0) {
                         summer = new Summariser(summariserName);
                     }
@@ -103,37 +96,8 @@ public class testJmeter {
                     ResultCollector logger = new ResultCollector(summer);
                     logger.setFilename(logFile);
                     testPlanTree.add(testPlanTree.getArray()[0], logger);
-                    jmeter.configure(testPlanTree);                 
+                    jmeter.configure(testPlanTree);
                     jmeter.run();
-                    String filePath = "/home/ywy/workspace/javaJmeter/jmeter.log";
-                    List<String> list = new ArrayList<String>();
-                    try {               
-                    	FileInputStream is = new FileInputStream(filePath);
-                    	InputStreamReader isr = new InputStreamReader(is);
-                    	BufferedReader br = new BufferedReader(isr);
-                    	String line;
-                    	try {
-                    		while ((line = br.readLine()) != null) {
-                    			if (line.equals(""))
-                    				continue;
-                    			else
-                    				list.add(line);
-                    		}
-                    	} catch (IOException e) {
-                    		e.printStackTrace();
-                    		System.out.println("读取一行数据时出错");
-                    	}
-                    } catch (FileNotFoundException e) {
-                    	e.printStackTrace();
-                    	System.out.println("FileNotFoundException");
-                    }
-                    String result = list.get(list.size()-1);
-                    double rt = 0;
-                    double tps = 0;
-                    rt = Double.parseDouble(result.substring(result.lastIndexOf("=")+1, result.lastIndexOf("/")).trim());
-                    System.out.println("RT:"+rt);
-                    tps = Double.parseDouble(result.substring(result.lastIndexOf("Avg:")+4, result.lastIndexOf("Min")).trim());
-                    System.out.println("tps"+tps);
                     System.exit(0);
                 }
             }
